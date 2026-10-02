@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { PageType, Product, BlogPost } from './types';
+import { trackPageView } from './utils/analytics';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ProductDetailModal } from './components/ProductDetailModal';
@@ -22,6 +23,35 @@ export default function App() {
   const [selectedBlog, setSelectedBlog] = useState<BlogPost | null>(null);
   const [storeSearchCity, setStoreSearchCity] = useState('');
   const [storeSearchPincode, setStoreSearchPincode] = useState('');
+
+  const isFirstRender = useRef(true);
+
+  // Track page views on route / page changes
+  useEffect(() => {
+    const pageTitleMap: Record<PageType, string> = {
+      'home': 'BORCELLE - Premium Nutrition. Happier Pets.',
+      'about': 'About Us - BORCELLE Pet Food',
+      'dog-food': 'Premium Dog Food & Nutrition - BORCELLE',
+      'cat-food': 'Premium Cat Food & Nutrition - BORCELLE',
+      'products': 'Complete Pet Nutrition Range - BORCELLE',
+      'store-locator': 'Find Stores Near You - BORCELLE',
+      'blogs': 'Pet Care Articles & Nutrition Guides - BORCELLE',
+      'contact': 'Contact Us & Pet Care Support - BORCELLE',
+    };
+
+    const title = pageTitleMap[currentPage] || `BORCELLE - ${currentPage}`;
+    const path = currentPage === 'home' ? '/' : `/${currentPage}`;
+
+    document.title = title;
+
+    // Skip the first render because the official script in index.html already fires the initial pageview
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    trackPageView(path, title);
+  }, [currentPage]);
 
   const handleNavigate = (page: PageType) => {
     setCurrentPage(page);

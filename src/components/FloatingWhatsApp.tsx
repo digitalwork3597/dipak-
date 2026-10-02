@@ -1,8 +1,16 @@
 import React from 'react';
 import { MessageCircle } from 'lucide-react';
+import { trackEvent } from '../utils/analytics';
 
 export const FloatingWhatsApp: React.FC = () => {
   const whatsappUrl = "https://wa.me/919712663470?text=Hi%20BORCELLE%2C%20I%20would%20like%20to%20know%20more%20about%20your%20Dog%20%26%20Cat%20Food%20products.%20Can%20you%20please%20help%20me%20choose%20the%20right%20food%20for%20my%20pet%3F";
+
+  const handleClick = () => {
+    trackEvent('contact_whatsapp', {
+      method: 'floating_button',
+      destination: '+919712663470'
+    });
+  };
 
   return (
     <div className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-50">
@@ -10,6 +18,7 @@ export const FloatingWhatsApp: React.FC = () => {
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
+        onClick={handleClick}
         aria-label="Chat with BORCELLE on WhatsApp"
         className="flex items-center gap-2.5 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3.5 sm:px-5 sm:py-3.5 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer group transform hover:-translate-y-1 active:translate-y-0 border border-emerald-500/30"
       >
